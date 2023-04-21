@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ApiWebCucumberTest"
+           tests="2"
+           failures="0"
+           errors="0"
+           skipped="0"
+           time="24,490">
+    <properties></properties>
+
+
+
+            <testcase
+                name="Basket_Test"
+                time="11,309"
+                classname="Test_No_Cucumber.ShoppingTest">
+            </testcase>
+            <testcase
+                name="Complete_order"
+                time="13,181"
+                classname="Test_No_Cucumber.ShoppingTest">
+            </testcase>
+</testsuite>

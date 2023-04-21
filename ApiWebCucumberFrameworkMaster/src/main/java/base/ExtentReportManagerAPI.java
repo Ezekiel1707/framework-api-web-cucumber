@@ -1,22 +1,22 @@
 package base;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import com.aventstack.extentreports.*;
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import org.testng.annotations.Listeners;
 
-import static resources.FolderUtil.createFolder;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-@Listeners(resources.Listeners.class)
-public class ExtentReportManager extends BasePageUI{
+@Listeners(resources.ListenersAPI.class)
+public class ExtentReportManagerAPI extends BasePageAPI{
     public static ExtentReports extentReport;
     public static String extentReportPrefix;
     public static ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>();
 
-    public ExtentReportManager() throws IOException {
+    public ExtentReportManagerAPI() throws IOException {
         super();
     }
 
@@ -76,9 +76,5 @@ public class ExtentReportManager extends BasePageUI{
 
     }
 
-    public synchronized static void attachImage() {
-        getTest().addScreenCaptureFromPath(getScreenshotDestination());
-
-    }
 
 }

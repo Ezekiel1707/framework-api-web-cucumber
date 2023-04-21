@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="framework-api-web-cucumber-test"
+           tests="2"
+           failures="0"
+           errors="0"
+           skipped="0"
+           time="7,678">
+    <properties></properties>
+
+
+
+            <testcase
+                name="AddPlace"
+                time="5,664"
+                classname="Tests_No_Cucumber.AddDeletePLace">
+            </testcase>
+            <testcase
+                name="DeletePlace"
+                time="2,014"
+                classname="Tests_No_Cucumber.AddDeletePLace">
+            </testcase>
+</testsuite>

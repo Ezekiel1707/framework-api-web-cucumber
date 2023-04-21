@@ -12,13 +12,13 @@ public class Hooks extends BasePageUI {
 
     @BeforeTest
     public void setup() throws IOException {
-        System.out.println("setup");
+        //System.out.println("setup");
         getDriver().get(getGlobalValue("url"));
     }
 
     @AfterTest
     public void tearDown() {
-        System.out.println("after");
+        //System.out.println("after");
         WebDriverInstance.cleanupDriver();
     }
 

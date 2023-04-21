@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="framework-api-web-cucumber-test"
+           tests="1"
+           failures="0"
+           errors="0"
+           skipped="0"
+           time="4,858">
+    <properties></properties>
+
+
+
+            <testcase
+                name="runScenario"
+                time="4,858"
+                classname="cucumber.Options.TestRunnerAPI">
+            </testcase>
+</testsuite>

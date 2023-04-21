@@ -5,7 +5,7 @@ import io.cucumber.testng.CucumberOptions;
 
 //@RunWith(Cucumber.class)
 @CucumberOptions(features = "src/test/java/featuresAPI", glue =
-        "stepsDefinitionsAPI", tags = "@TAG", plugin =
+        "stepsDefinitionsAPI", tags = "@AddPlace", plugin =
         "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:")
 
 public class TestRunnerAPI extends AbstractTestNGCucumberTests {

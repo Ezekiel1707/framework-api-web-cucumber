@@ -37,7 +37,7 @@ public class BasePageUI {
 
     public static String takeSnapShot(String name) throws IOException {
         File srcFile = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.FILE);
-        String destFile = System.getProperty("user.dir") + "\\test-output\\screenshots\\" + timestamp() + ".png";
+        String destFile = System.getProperty("user.dir") + "\\test-output\\Reports\\screenshots\\" + timestamp() + ".png";
         screeShotDestinationPath = destFile;
 
         try {
@@ -110,6 +110,7 @@ public class BasePageUI {
         Select select = new Select(element);
         select.selectByVisibleText(option);
     }
+
     public static void selectByIndex(WebElement element, int option) {
         Select select = new Select(element);
         select.selectByIndex(option);

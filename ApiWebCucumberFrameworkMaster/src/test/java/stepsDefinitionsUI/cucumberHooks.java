@@ -13,10 +13,11 @@ import java.io.IOException;
 
 
 public class cucumberHooks extends BasePageUI {
-
+    public static Scenario scenarioFinal;
     @Before
-    public void setup() throws IOException {
+    public void setup(Scenario scenario) throws IOException {
         getDriver().get(getGlobalValue("url"));
+        scenarioFinal = scenario;
     }
 
     @After(order=0)
@@ -30,7 +31,7 @@ public class cucumberHooks extends BasePageUI {
     }
 
     @AfterStep("@Screenshot")
-    public void screenshot(Scenario scenario) throws IOException {
+    public static void screenshot(Scenario scenario) throws IOException {
 
         byte[] screenshot = ((TakesScreenshot) getDriver()).getScreenshotAs(OutputType.BYTES);
         scenario.attach(screenshot, "image/png", "image");

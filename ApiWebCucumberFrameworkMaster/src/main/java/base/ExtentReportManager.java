@@ -80,5 +80,8 @@ public class ExtentReportManager extends BasePageUI{
         getTest().addScreenCaptureFromPath(getScreenshotDestination());
 
     }
-
+    public synchronized static void addScreeshot() throws IOException {
+        takeSnapShot("temp");
+        getTest().log(Status.INFO, MediaEntityBuilder.createScreenCaptureFromPath(getScreenshotDestination()).build());
+    }
 }

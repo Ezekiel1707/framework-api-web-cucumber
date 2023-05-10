@@ -17,6 +17,8 @@ import org.testng.Assert;
 import pageObjectsUI.*;
 import resources.excelUtil;
 
+import static stepsDefinitionsUI.cucumberHooks.scenarioFinal;
+
 public class stepDefinitionsUI extends BasePageUI {
     LoginPage login = new LoginPage();
     LandingPage landing = new LandingPage();
@@ -145,9 +147,13 @@ public class stepDefinitionsUI extends BasePageUI {
 
         List<Map<String, String>> envioList = table.asMaps(String.class, String.class);
         sendText(Delivery.getAddressField(),envioList.get(0).get("Calle"));
+        cucumberHooks.screenshot(scenarioFinal);
         sendText(Delivery.getCityField(),envioList.get(0).get("Ciudad"));
+        cucumberHooks.screenshot(scenarioFinal);
         selectByText(Delivery.getStateDropdown(),envioList.get(0).get("Estado"));
+        cucumberHooks.screenshot(scenarioFinal);
         sendText(Delivery.getPostcodeField(),envioList.get(0).get("CodigoPostal"));
+        cucumberHooks.screenshot(scenarioFinal);
         click(Delivery.getContinueBtn());
     }
 

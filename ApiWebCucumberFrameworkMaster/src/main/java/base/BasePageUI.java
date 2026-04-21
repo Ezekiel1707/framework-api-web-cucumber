@@ -186,12 +186,6 @@ public class basePageUI {
         return element.getText();
     }
 
-    public void waitSpinner(int milliseconds) throws InterruptedException {
-        while (cssElementIsPresent(".lds-spinner")) {
-            Thread.sleep(milliseconds);
-        }
-    }
-
     public static String getText(String locator) throws NoSuchElementException {
         WebElement element = getDriver().findElement(By.xpath(locator));
         return element.getText();

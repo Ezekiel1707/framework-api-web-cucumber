@@ -1,14 +1,13 @@
 package pageObjectsUI;
 
-import base.BasePageUI;
+import base.basePageUI;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
-import java.util.List;
 
-public class ShopProductPage extends BasePageUI {
+public class ShopProductPage extends basePageUI {
     public WebDriver driver;
 
     By sizeOption = By.cssSelector("[data-product-attribute='1']");

@@ -1,13 +1,13 @@
 package pageObjectsUI;
 
-import base.BasePageUI;
+import base.basePageUI;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
 
-public class OrderFormPayment extends BasePageUI {
+public class OrderFormPayment extends basePageUI {
 
     public WebDriver driver;
 

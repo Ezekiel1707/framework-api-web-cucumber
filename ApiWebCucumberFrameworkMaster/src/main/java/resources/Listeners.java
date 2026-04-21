@@ -1,14 +1,14 @@
 package resources;
 
 import java.io.IOException;
-import base.BasePageUI;
+import base.basePageUI;
 import base.ExtentReportManager;
 import io.cucumber.java.Scenario;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
-public class Listeners extends BasePageUI implements ITestListener {
+public class Listeners extends basePageUI implements ITestListener {
 
     public Listeners() throws IOException {
         super();

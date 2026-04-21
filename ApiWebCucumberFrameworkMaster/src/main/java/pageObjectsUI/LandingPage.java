@@ -1,13 +1,13 @@
 package pageObjectsUI;
 
-import base.BasePageUI;
+import base.basePageUI;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
 
-public class LandingPage extends BasePageUI {
+public class LandingPage extends basePageUI {
 
     public WebDriver driver;
 
@@ -37,7 +37,7 @@ public class LandingPage extends BasePageUI {
         super();
     }
 
-    public WebElement getCookiesBtn() throws  IOException {
+    public WebElement getCookiesBtn() throws IOException {
         this.driver = getDriver();
         return driver.findElement(cookiesBtn);
     }

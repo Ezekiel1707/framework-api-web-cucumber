@@ -1,13 +1,13 @@
 package pageObjectsUI;
 
-import base.BasePageUI;
+import base.basePageUI;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import java.util.List;
 import java.io.IOException;
 
-public class ejemploPageObjects extends BasePageUI {
+public class ejemploPageObjects extends basePageUI {
     public WebDriver driver;
 
     By name = By.cssSelector("ejemplo");
@@ -19,10 +19,11 @@ public class ejemploPageObjects extends BasePageUI {
 
     public WebElement getName() throws IOException {
         this.driver = getDriver();
-        return  driver.findElement(name);
+        return driver.findElement(name);
     }
+
     public List<WebElement> getList() throws IOException {
         this.driver = getDriver();
-        return  driver.findElements(list);
+        return driver.findElements(list);
     }
 }

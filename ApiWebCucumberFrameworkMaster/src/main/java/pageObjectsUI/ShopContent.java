@@ -1,14 +1,13 @@
 package pageObjectsUI;
 
-import base.BasePageUI;
+import base.basePageUI;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
-import java.util.List;
 
-public class ShopContent extends BasePageUI {
+public class ShopContent extends basePageUI {
     public WebDriver driver;
 
     By continueShoppingBtn = By.xpath("//button[contains(text(), 'Continue')]");

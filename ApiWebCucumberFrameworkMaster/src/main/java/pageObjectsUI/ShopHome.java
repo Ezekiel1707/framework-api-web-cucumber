@@ -1,13 +1,13 @@
 package pageObjectsUI;
 
-import base.BasePageUI;
+import base.basePageUI;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
 
-public class ShopHome extends BasePageUI {
+public class ShopHome extends basePageUI {
     public WebDriver driver;
 
     By productOne = By.linkText("Hummingbird Printed T-Shirt");
@@ -20,17 +20,21 @@ public class ShopHome extends BasePageUI {
     By productEight = By.linkText("Mug Today Is A Good Day");
     By singInBtn = By.cssSelector("div#_desktop_user_info .hidden-sm-down");
     By clothesBtn = By.cssSelector(".user-info [rel='nofollow']:nth-of-type(1)");
+
     public ShopHome() throws IOException {
         super();
     }
+
     public WebElement getClothesBtn() throws IOException {
         this.driver = getDriver();
         return driver.findElement(clothesBtn);
     }
+
     public WebElement getSingInBtn() throws IOException {
         this.driver = getDriver();
         return driver.findElement(singInBtn);
     }
+
     public WebElement getProdOne() throws IOException {
         this.driver = getDriver();
         return driver.findElement(productOne);

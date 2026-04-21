@@ -1,20 +1,19 @@
 package pageObjectsUI;
 
-import base.BasePageUI;
+import base.basePageUI;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.io.IOException;
 
-public class LoginPage extends BasePageUI {
+public class LoginPage extends basePageUI {
 
     public WebDriver driver;
 
     By email = By.cssSelector("input#login_text");
     By password = By.cssSelector("input#login_password");
     By loginBtn = By.cssSelector("button#login_btn");
-
 
     public LoginPage() throws IOException {
         super();

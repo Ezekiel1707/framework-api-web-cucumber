@@ -1,13 +1,11 @@
 package stepsDefinitionsUI;
 
-import base.BasePageUI;
+import base.basePageUI;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import base.ExtentReportManager;
 import com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
@@ -19,7 +17,7 @@ import resources.excelUtil;
 
 import static stepsDefinitionsUI.cucumberHooks.scenarioFinal;
 
-public class stepDefinitionsUI extends BasePageUI {
+public class stepDefinitionsUI extends basePageUI {
     LoginPage login = new LoginPage();
     LandingPage landing = new LandingPage();
     ShopHome shopHome = new ShopHome();
@@ -49,12 +47,12 @@ public class stepDefinitionsUI extends BasePageUI {
 
     @Then("Mando los datos del email: {string}")
     public void mandoLosDatosDelEmail(String email) throws IOException {
-        sendText(login.getEmail(),email);
+        sendText(login.getEmail(), email);
     }
 
     @And("Mando los datos de la contraseña: {string}")
     public void mandoLosDatosDeLaContraseña(String password) throws IOException {
-        sendText(login.getPassword(),password);
+        sendText(login.getPassword(), password);
     }
 
     @And("Le doy clic al botón de Login y cierro la ventana emergente")
@@ -64,6 +62,7 @@ public class stepDefinitionsUI extends BasePageUI {
         System.out.println("user has logged in");
         Thread.sleep(3000);
     }
+
     @Then("Navego a la tienda de prueba")
     public void navegoALaTiendaDePrueba() throws IOException {
         click2(landing.getTestStoreLink());
@@ -114,15 +113,15 @@ public class stepDefinitionsUI extends BasePageUI {
 
         } catch (AssertionError e) {
             ExtentCucumberAdapter.addTestStepLog("El monto esperado no coincide con el mostrado");
-            ExtentCucumberAdapter.addTestStepLog("Se muestra: "+getText(cart.getTotalAmount()));
-            Assert.fail("Se muestra: "+getText(cart.getTotalAmount()));
+            ExtentCucumberAdapter.addTestStepLog("Se muestra: " + getText(cart.getTotalAmount()));
+            Assert.fail("Se muestra: " + getText(cart.getTotalAmount()));
         }
     }
 
     @Then("Agrego el codigo de descuento {string} y continuo el proceso de compra")
     public void agregoElCodigoDeDescuentoYContinuoElProcesoDeCompra(String codigo) throws IOException {
         click(cart.getHavePromo());
-        sendText(cart.getPromoTextbox(),codigo);
+        sendText(cart.getPromoTextbox(), codigo);
         click2(cart.getPromoAddBtn());
         ExtentCucumberAdapter.addTestStepLog("Se le dio al botón de agregar descuento");
         click2(cart.getProceedCheckoutBtn());
@@ -132,12 +131,12 @@ public class stepDefinitionsUI extends BasePageUI {
     public void llenoLaDataDeLaInformaciónPersonalDelDeLaHojaDeExcel(String data, String sheet) throws Exception {
         Map<String, String> excelDataMap = excelUtil.getData(data, sheet);
 
-        if(Objects.equals(excelDataMap.get("genero"),"masculino")){
+        if (Objects.equals(excelDataMap.get("genero"), "masculino")) {
             Info.getGenderMr().click();
         }
-        sendText(Info.getFirstNameField(),excelDataMap.get("nombre"));
-        sendText(Info.getLastnameField(),excelDataMap.get("apellido"));
-        sendText(Info.getEmailField(),excelDataMap.get("email"));
+        sendText(Info.getFirstNameField(), excelDataMap.get("nombre"));
+        sendText(Info.getLastnameField(), excelDataMap.get("apellido"));
+        sendText(Info.getEmailField(), excelDataMap.get("email"));
         click(Info.getTermsConditionsCheckbox());
         click(Info.getContinueBtn());
     }
@@ -146,20 +145,20 @@ public class stepDefinitionsUI extends BasePageUI {
     public void llenoLaDataDeEntrega(DataTable table) throws IOException {
 
         List<Map<String, String>> envioList = table.asMaps(String.class, String.class);
-        sendText(Delivery.getAddressField(),envioList.get(0).get("Calle"));
+        sendText(Delivery.getAddressField(), envioList.get(0).get("Calle"));
         cucumberHooks.screenshot(scenarioFinal);
-        sendText(Delivery.getCityField(),envioList.get(0).get("Ciudad"));
+        sendText(Delivery.getCityField(), envioList.get(0).get("Ciudad"));
         cucumberHooks.screenshot(scenarioFinal);
-        selectByText(Delivery.getStateDropdown(),envioList.get(0).get("Estado"));
+        selectByText(Delivery.getStateDropdown(), envioList.get(0).get("Estado"));
         cucumberHooks.screenshot(scenarioFinal);
-        sendText(Delivery.getPostcodeField(),envioList.get(0).get("CodigoPostal"));
+        sendText(Delivery.getPostcodeField(), envioList.get(0).get("CodigoPostal"));
         cucumberHooks.screenshot(scenarioFinal);
         click(Delivery.getContinueBtn());
     }
 
     @And("Coloco el mensaje {string} para el delivery")
     public void colocoElMensajeParaElDelivery(String mensaje) throws IOException {
-        sendText(shippingMethod.getDeliveryMsgTextbox(),mensaje);
+        sendText(shippingMethod.getDeliveryMsgTextbox(), mensaje);
         click(shippingMethod.getContinueBtn());
     }
 
@@ -171,33 +170,32 @@ public class stepDefinitionsUI extends BasePageUI {
         ExtentCucumberAdapter.addTestStepLog("Se puso la orden de manera correcta");
     }
 
-
     @And("Navego a la pagina de login de la tienda")
     public void navegoALaPaginaDeLoginDeLaTienda() throws IOException, InterruptedException {
         click2(shopHome.getSingInBtn());
         Thread.sleep(2000);
-        validateResults(getText(loginStore.getHeaderTxt()).toLowerCase(),"log in to your account");
+        validateResults(getText(loginStore.getHeaderTxt()).toLowerCase(), "log in to your account");
     }
 
     @Then("Mando los datos del email: {string} de la tienda")
     public void mandoLosDatosDelEmailDeLaTienda(String email) throws IOException {
-        sendText(loginStore.getEmail(),email);
+        sendText(loginStore.getEmail(), email);
     }
 
     @And("Mando los datos de la contraseña: {string} de la tienda")
     public void mandoLosDatosDeLaContraseñaDeLaTienda(String password) throws IOException {
-        sendText(loginStore.getPassword(),password);
+        sendText(loginStore.getPassword(), password);
     }
 
     @And("Le doy clic al botón de Login de la tienda y corroboro que se hizo login")
     public void leDoyClicAlBotónDeLoginDeLaTiendaYCorroboroQueSeHizoLogin() throws IOException {
         click(loginStore.getLoginBtn());
-        validateResults(getText(loginStore.getHeaderTxt()).toLowerCase(),"your account");
+        validateResults(getText(loginStore.getHeaderTxt()).toLowerCase(), "your account");
     }
 
     @And("Hago LogOut y corroboro que se hizo logout")
     public void hagoLogOutYCorroboroQueSeHizoLogout() throws IOException {
         click(loginStore.getLogOutBtn());
-        validateResults(getText(loginStore.getHeaderTxt()).toLowerCase(),"log in to your account");
+        validateResults(getText(loginStore.getHeaderTxt()).toLowerCase(), "log in to your account");
     }
 }

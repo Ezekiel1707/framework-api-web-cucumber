@@ -8,10 +8,8 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.aventstack.extentreports.reporter.configuration.Theme;
 import org.testng.annotations.Listeners;
 
-import static resources.FolderUtil.createFolder;
-
 @Listeners(resources.Listeners.class)
-public class ExtentReportManager extends BasePageUI{
+public class ExtentReportManager extends basePageUI {
     public static ExtentReports extentReport;
     public static String extentReportPrefix;
     public static ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>();
@@ -29,9 +27,10 @@ public class ExtentReportManager extends BasePageUI{
 
     public static ExtentReports setupExtentReports(String testName) {
         extentReport = new ExtentReports();
-        String ExtentSparkReporterFolder = System.getProperty("user.dir") + "/test-output/Reports/"+extentReportsPrefix_Name(testName)+"/" +
+        String ExtentSparkReporterFolder = System.getProperty("user.dir") + "/test-output/Reports/"
+                + extentReportsPrefix_Name(testName) + "/" +
                 extentReportsPrefix_Name(testName);
-        ExtentSparkReporter spark = new ExtentSparkReporter(ExtentSparkReporterFolder+ ".html");
+        ExtentSparkReporter spark = new ExtentSparkReporter(ExtentSparkReporterFolder + ".html");
         extentReport.attachReporter(spark);
 
         extentReport.setSystemInfo("Tester", "Prueba");
@@ -80,6 +79,7 @@ public class ExtentReportManager extends BasePageUI{
         getTest().addScreenCaptureFromPath(getScreenshotDestination());
 
     }
+
     public synchronized static void addScreeshot() throws IOException {
         takeSnapShot("temp");
         getTest().log(Status.INFO, MediaEntityBuilder.createScreenCaptureFromPath(getScreenshotDestination()).build());

@@ -40,7 +40,7 @@ public class basePageUI {
     }
 
     public static WebDriver getDriver() {
-        return WebDriverInstance.getDriver();
+        return webDriverInstance.getDriver();
     }
 
     public static String takeSnapShot(String name) throws IOException {

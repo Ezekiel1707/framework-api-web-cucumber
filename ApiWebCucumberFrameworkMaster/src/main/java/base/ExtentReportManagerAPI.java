@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Listeners(resources.ListenersAPI.class)
-public class ExtentReportManagerAPI extends BasePageAPI{
+public class ExtentReportManagerAPI extends basePageAPI {
     public static ExtentReports extentReport;
     public static String extentReportPrefix;
     public static ThreadLocal<ExtentTest> extentTest = new ThreadLocal<>();
@@ -29,9 +29,10 @@ public class ExtentReportManagerAPI extends BasePageAPI{
 
     public static ExtentReports setupExtentReports(String testName) {
         extentReport = new ExtentReports();
-        String ExtentSparkReporterFolder = System.getProperty("user.dir") + "/test-output/Reports/"+extentReportsPrefix_Name(testName)+"/" +
+        String ExtentSparkReporterFolder = System.getProperty("user.dir") + "/test-output/Reports/"
+                + extentReportsPrefix_Name(testName) + "/" +
                 extentReportsPrefix_Name(testName);
-        ExtentSparkReporter spark = new ExtentSparkReporter(ExtentSparkReporterFolder+ ".html");
+        ExtentSparkReporter spark = new ExtentSparkReporter(ExtentSparkReporterFolder + ".html");
         extentReport.attachReporter(spark);
 
         extentReport.setSystemInfo("Tester", "Prueba");
@@ -75,6 +76,5 @@ public class ExtentReportManagerAPI extends BasePageAPI{
         getTest().fail(message);
 
     }
-
 
 }

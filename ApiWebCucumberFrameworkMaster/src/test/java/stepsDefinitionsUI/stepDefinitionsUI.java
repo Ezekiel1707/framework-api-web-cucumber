@@ -190,6 +190,9 @@ public class stepDefinitionsUI extends basePageUI {
     @And("Le doy clic al botón de Login de la tienda y corroboro que se hizo login")
     public void leDoyClicAlBotónDeLoginDeLaTiendaYCorroboroQueSeHizoLogin() throws IOException {
         click(loginStore.getLoginBtn());
+        waitElement("//h1",Duration.ofSeconds(3));
+        click(shopHome.getAccountBtn());
+        waitElement("//h1",Duration.ofSeconds(3));
         validateResults(getText(loginStore.getHeaderTxt()).toLowerCase(), "your account");
     }
 

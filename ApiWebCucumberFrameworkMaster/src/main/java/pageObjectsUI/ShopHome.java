@@ -20,9 +20,14 @@ public class ShopHome extends basePageUI {
     By productEight = By.linkText("Mug Today Is A Good Day");
     By singInBtn = By.cssSelector("div#_desktop_user_info .hidden-sm-down");
     By clothesBtn = By.cssSelector(".user-info [rel='nofollow']:nth-of-type(1)");
+    By accountBtn = By.xpath("//div/div/div[1]/div[2]/div[1]/div/a[2]");
 
     public ShopHome() throws IOException {
         super();
+    }
+    public WebElement getAccountBtn() throws IOException {
+        this.driver = getDriver();
+        return driver.findElement(accountBtn);
     }
 
     public WebElement getClothesBtn() throws IOException {

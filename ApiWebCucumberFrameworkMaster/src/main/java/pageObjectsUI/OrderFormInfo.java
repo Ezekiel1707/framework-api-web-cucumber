@@ -15,7 +15,7 @@ public class OrderFormInfo extends basePageUI {
     By genderMrs = By.cssSelector("label:nth-of-type(2) > .custom-radio > input[name='id_gender']");
     By firstNameField = By.cssSelector("input[name='firstname']");
     By lastNameField = By.cssSelector("input[name='lastname']");
-    By emailField = By.cssSelector("form#customer-form > section input[name='email']");
+    By emailField = By.cssSelector(".tab-content [role='tabpanel']:nth-of-type(1) [name='email']");
     By passwordField = By.cssSelector("form#customer-form > section input[name='password']");
     By birthDateField = By.cssSelector("input[name='birthday']");
     By receiveOffersCheckbox = By.cssSelector("div:nth-of-type(7)  span > label > span");

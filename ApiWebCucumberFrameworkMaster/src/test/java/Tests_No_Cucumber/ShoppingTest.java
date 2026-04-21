@@ -192,6 +192,7 @@ public class ShoppingTest extends Hooks {
         ExtentReportManager.pass("Se coloco correctamente la clave");
         click(loginStore.getLoginBtn());
         ExtentReportManager.pass("Se le dio clic al botón de login");
+
         validateResults(getText(loginStore.getHeaderTxt()).toLowerCase(),"your account");
         ExtentReportManager.pass("Se hizo login");
         click(loginStore.getLogOutBtn());

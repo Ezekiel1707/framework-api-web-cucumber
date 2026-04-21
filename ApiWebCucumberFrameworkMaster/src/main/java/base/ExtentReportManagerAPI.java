@@ -7,6 +7,7 @@ import com.aventstack.extentreports.reporter.configuration.Theme;
 import org.testng.annotations.Listeners;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -29,8 +30,8 @@ public class ExtentReportManagerAPI extends basePageAPI {
 
     public static ExtentReports setupExtentReports(String testName) {
         extentReport = new ExtentReports();
-        String ExtentSparkReporterFolder = System.getProperty("user.dir") + "/test-output/Reports/"
-                + extentReportsPrefix_Name(testName) + "/" +
+        String ExtentSparkReporterFolder = Paths.get(System.getProperty("user.dir"),
+                "test-output", "Reports/").toString() + extentReportsPrefix_Name(testName) + "/" +
                 extentReportsPrefix_Name(testName);
         ExtentSparkReporter spark = new ExtentSparkReporter(ExtentSparkReporterFolder + ".html");
         extentReport.attachReporter(spark);

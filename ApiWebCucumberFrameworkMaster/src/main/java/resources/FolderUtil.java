@@ -1,16 +1,18 @@
 package resources;
 
-import base.BasePageAPI;
+import base.basePageUI;
 import java.io.File;
+import java.nio.file.Paths;
 
-public class FolderUtil extends BasePageAPI {
+public class folderUtil extends basePageUI {
+
     public static String createFolder(String nameFolder) {
-        String pathFolder = System.getProperty("user.dir")
-                + "\\src\\test\\java\\logs\\" + nameFolder;
+        String pathFolder = Paths.get(System.getProperty("user.dir"), "src", "test", "java", "logs", nameFolder)
+                .toString();
         File logsFolder = new File(pathFolder);
         if (!logsFolder.exists()) {
             logsFolder.mkdirs();
-            System.out.println("Carpeta creada: "+nameFolder);
+            System.out.println("Carpeta creada: " + nameFolder);
         } else {
             System.out.println("Carpeta ya existente: " + nameFolder);
         }
@@ -21,7 +23,7 @@ public class FolderUtil extends BasePageAPI {
         File logsFolder = new File(pathFolder);
         if (!logsFolder.exists()) {
             logsFolder.mkdirs();
-            System.out.println("Carpeta creada: "+nameFolder);
+            System.out.println("Carpeta creada: " + nameFolder);
         } else {
             System.out.println("Carpeta ya existente: " + nameFolder);
         }

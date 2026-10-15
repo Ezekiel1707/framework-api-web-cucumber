@@ -21,7 +21,7 @@ public class webDriverInstance extends basePageUI {
         super();
     }
 
-    public static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
     public static WebDriver getDriver() {
         if (driver.get() == null) {
@@ -40,13 +40,11 @@ public class webDriverInstance extends basePageUI {
         Map<String, Object> profile = new HashMap<>();
         Map<String, Object> contentSettings = new HashMap<>();
         contentSettings.put("geolocation", 2);
-        contentSettings.put("profile.default_content_setting_values.notifications", 2);
+        contentSettings.put("notifications", 2);
         profile.put("managed_default_content_settings", contentSettings);
         prefs.put("profile", profile);
         prefs.put("download.default_directory", Paths.get(System.getProperty("user.dir"),
                 "src", "main", "java", "resources", "Descargas").toString());
-        // prefs.put("download.default_directory", System.getProperty("user.dir")
-        // + "\\src\\main\\java\\resources\\Descargas\\");
         prefs.put("plugins.always_open_pdf_externally", true);
         return prefs;
     }
@@ -54,12 +52,16 @@ public class webDriverInstance extends basePageUI {
     public static WebDriver createDriver() throws IOException {
         // WebDriverManager.chromedriver().setup();
         WebDriver driver;
-
-        if (getGlobalValue("browser").equals("chrome")) {
+        String browser = getGlobalValue("browser");
+        if (Objects.equals(browser, "chrome")) {
             Map<String, Object> seleniumOptions = new HashMap<>();
             seleniumOptions.put("build", "CaptchaInSelenium");
             seleniumOptions.put("name", "TCaptchaInSeleniumSample");
             seleniumOptions.put("profile.default_content_setting_values.automatic_downloads", 1);
+            // System.setProperty("webdriver.chrome.driver",
+            // Paths.get(System.getProperty("user.dir"),
+            // "src", "main", "java", "resources", "drivers",
+            // "chromedriver.exe").toString());
 
             ChromeOptions options = new ChromeOptions();
             options.setCapability("selenium:options", seleniumOptions);
@@ -69,16 +71,24 @@ public class webDriverInstance extends basePageUI {
             // options.addArguments("--enable-features=ClipboardAllwWithoutSanitization,ClipboardAPI");
             // options.addArguments("--disable-features=BlockInsecurePrivateNetworkRequests");
             // options.addArguments("--window-position=-2400,-2400");
-
+            // options.setBinary(Paths.get(System.getProperty("user.dir"),
+            // "src", "main", "java", "resources",
+            // "drivers","chromedriver.exe").toString());
             if (Objects.equals(getGlobalValue("headless"), "yes")) {
                 options.addArguments("--headless=new");
                 options.addArguments("--window-size=1920,1080");
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+                options.addArguments("--disable-gpu");
+
             }
-            // System.setProperty("webdriver.chrome.driver",
-            // System.getProperty("user.dir") +
-            // "\\src\\main\\java\\resources\\drivers\\chromedriver.exe");
+            String chromeVersion = getGlobalValue("chromeVersion");
+            if (chromeVersion != null && !chromeVersion.isEmpty()) {
+                options.setBrowserVersion(chromeVersion);
+            }
+
             driver = new ChromeDriver(options);
-        } else if (getGlobalValue("browser").equals("firefox")) {
+        } else if (Objects.equals(browser, "firefox")) {
             FirefoxOptions options = new FirefoxOptions();
 
             FirefoxProfile profile = new FirefoxProfile();
@@ -99,9 +109,11 @@ public class webDriverInstance extends basePageUI {
                     Paths.get(System.getProperty("user.dir"),
                             "src", "main", "java", "resources", "drivers", "geckodriver.exe").toString());
             driver = new FirefoxDriver(options);
-        } else if (getGlobalValue("browser").equals("safari")) {
-            System.setProperty("webdriver.safari.driver",
-                    System.getProperty("user.dir") + "\\src\\main\\java\\resources\\drivers\\safaridriver.exe");
+        } else if (Objects.equals(browser, "safari")) {
+            if (!isMacOS()) {
+                throw new RuntimeException(
+                        "Safari is supported only on macOS. Current OS: " + System.getProperty("os.name"));
+            }
             driver = new SafariDriver();
         } else {
             Map<String, Object> seleniumOptions = new HashMap<>();
@@ -129,8 +141,16 @@ public class webDriverInstance extends basePageUI {
         return driver;
     }
 
+    private static boolean isMacOS() {
+        String os = System.getProperty("os.name").toLowerCase();
+        return os.contains("mac") || os.contains("darwin");
+    }
+
     public static void cleanupDriver() {
-        driver.get().quit();
-        driver.remove();
+        WebDriver d = driver.get();
+        if (d != null) {
+            d.quit();
+            driver.remove();
+        }
     }
 }

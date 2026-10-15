@@ -1,154 +1,367 @@
+
 package resources;
 
-import base.basePageUI;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.xssf.usermodel.*;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-public class excelUtil extends basePageUI {
-    private static XSSFSheet excelSheet;
-    private static XSSFWorkbook excelWorkbook;
-    private static FileInputStream excelFile;
+import static base.basePageUI.getGlobalValue;
 
-    private static void setExcelFile(String sheetName) throws IOException {
-        closeExcelFile();
+public final class excelUtil {
 
-        String sheetPath = Paths.get(System.getProperty("user.dir"), "src", "main", "java", "resources", "testData",
-                getGlobalValue("excelName")).toString();
+    private static final DataFormatter FORMATTER = new DataFormatter();
 
-        excelFile = new FileInputStream(sheetPath);
-        excelWorkbook = new XSSFWorkbook(excelFile);
+    // Thread-safe session mode
+    private static final ThreadLocal<XSSFWorkbook> workbookHolder = new ThreadLocal<>();
+    private static final ThreadLocal<FileInputStream> inputStreamHolder = new ThreadLocal<>();
 
-        for (int i = 0; i < excelWorkbook.getNumberOfSheets(); i++) {
-            if (excelWorkbook.getSheetName(i).equalsIgnoreCase(sheetName)) {
-                excelSheet = excelWorkbook.getSheet(excelWorkbook.getSheetName(i));
-                break;
-            }
+    private excelUtil() {
+    }
+
+    private static Path getExcelPath() throws IOException {
+
+        return Paths.get(
+                System.getProperty("user.dir"),
+                "src",
+                "main",
+                "java",
+                "resources",
+                "testData",
+                getGlobalValue("excelName"));
+    }
+
+    // ============================================================
+    // SESSION MODE (Large files / Parallel execution)
+    // ============================================================
+
+    public static void openExcelFile() throws IOException {
+
+        if (workbookHolder.get() != null) {
+            return;
         }
 
-        if (excelSheet == null) {
-            throw new IOException("Sheet '" + sheetName + "' not found in workbook");
-        }
+        FileInputStream fis = new FileInputStream(getExcelPath().toFile());
+        XSSFWorkbook workbook = new XSSFWorkbook(fis);
+
+        inputStreamHolder.set(fis);
+        workbookHolder.set(workbook);
     }
 
     public static void closeExcelFile() {
+
         try {
-            if (excelWorkbook != null) {
-                excelWorkbook.close();
-                excelWorkbook = null;
+
+            XSSFWorkbook workbook = workbookHolder.get();
+            FileInputStream fis = inputStreamHolder.get();
+
+            if (workbook != null) {
+                workbook.close();
             }
-            if (excelFile != null) {
-                excelFile.close();
-                excelFile = null;
+
+            if (fis != null) {
+                fis.close();
             }
+
         } catch (IOException e) {
-            System.err.println("Error closing Excel file: " + e.getMessage());
+            throw new RuntimeException("Failed to close Excel file.", e);
+        } finally {
+            workbookHolder.remove();
+            inputStreamHolder.remove();
         }
     }
 
-    public static int getRows(String sheetName) throws Exception {
-        setExcelFile(sheetName);
-        return excelSheet.getLastRowNum();
-    }
+    // ============================================================
+    // COMMON METHODS
+    // ============================================================
 
-    private static int getDataRow(String dataKey) {
-        int rowCount = excelSheet.getLastRowNum();
-        for (int row = 0; row <= rowCount; row++) {
-            XSSFRow currentRow = excelSheet.getRow(row);
-            if (currentRow != null) {
-                XSSFCell currentCell = currentRow.getCell(0);
-                if (currentCell != null && getCellData(row, 0).equalsIgnoreCase(dataKey)) {
-                    return row;
-                }
-            }
+    private static XSSFSheet getSheet(XSSFWorkbook workbook, String sheetName) {
+
+        XSSFSheet sheet = workbook.getSheet(sheetName);
+
+        if (sheet == null) {
+            throw new IllegalArgumentException(
+                    "Sheet '" + sheetName + "' does not exist.");
         }
-        return -1; // Return -1 instead of 0 to avoid confusion with row 0
+
+        return sheet;
     }
 
-    private static String getCellData(int rowNumb, int colNumb) {
-        XSSFRow row = excelSheet.getRow(rowNumb);
+    private static String getCellValue(XSSFRow row, int column) {
+
         if (row == null) {
             return "";
         }
 
-        XSSFCell cell = row.getCell(colNumb);
+        XSSFCell cell = row.getCell(column);
+
         if (cell == null) {
             return "";
         }
 
-        if (cell.getCellType() == CellType.NUMERIC) {
-            cell.setCellType(CellType.STRING);
-        }
-        return cell.getStringCellValue();
+        return FORMATTER.formatCellValue(cell);
     }
 
-    public static void setCellData(String result, int rowNumb, int colNumb, String sheetPath, String sheetName)
-            throws Exception {
-        XSSFRow row = excelSheet.getRow(rowNumb);
-        if (row == null) {
-            throw new Exception("Row " + rowNumb + " does not exist in sheet");
+    private static int findDataRow(XSSFSheet sheet, String dataKey) {
+
+        int lastRow = sheet.getLastRowNum();
+
+        for (int row = 1; row <= lastRow; row++) {
+
+            String value = getCellValue(sheet.getRow(row), 0);
+
+            if (value.equalsIgnoreCase(dataKey.trim())) {
+                return row;
+            }
         }
 
-        XSSFCell cell = row.getCell(colNumb);
-        if (cell == null) {
-            cell = row.createCell(colNumb);
-        }
-        cell.setCellValue(result);
+        return -1;
+    }
 
-        try (FileOutputStream fileOut = new FileOutputStream(sheetPath + sheetName)) {
-            excelWorkbook.write(fileOut);
-            fileOut.flush();
-        } catch (IOException e) {
-            throw new Exception("Error writing to Excel file: " + e.getMessage(), e);
+    // ============================================================
+    // STATELESS MODE (Default)
+    // ============================================================
+
+    public static int getRows(String sheetName) throws IOException {
+
+        try (FileInputStream fis = new FileInputStream(getExcelPath().toFile());
+                XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
+
+            return getSheet(workbook, sheetName).getLastRowNum() + 1;
         }
     }
 
-    public static Map<String, String> getData(String dataKey, String sheetName) throws Exception {
-        Map<String, String> dataMap = new HashMap<String, String>();
-        setExcelFile(sheetName);
+    public static Map<String, String> getData(String dataKey,
+            String sheetName) throws IOException {
 
-        int dataRow = getDataRow(dataKey.trim());
+        try (FileInputStream fis = new FileInputStream(getExcelPath().toFile());
+                XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
+
+            return getData(dataKey, sheetName, workbook);
+        }
+    }
+
+    public static String getValue(String dataKey,
+            String sheetName,
+            String columnName) throws IOException {
+
+        return getData(dataKey, sheetName).get(columnName);
+    }
+
+    public static String getValue(String dataKey,
+            String sheetName,
+            int columnIndex) throws IOException {
+
+        try (FileInputStream fis = new FileInputStream(getExcelPath().toFile());
+                XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
+
+            XSSFSheet sheet = getSheet(workbook, sheetName);
+
+            int dataRow = findDataRow(sheet, dataKey);
+
+            if (dataRow == -1) {
+                throw new IllegalArgumentException(
+                        "No data found for key: " + dataKey);
+            }
+
+            return getCellValue(sheet.getRow(dataRow), columnIndex);
+        }
+    }
+
+    public static String getValue(int rowIndex,
+            String sheetName,
+            int columnIndex) throws IOException {
+
+        try (FileInputStream fis = new FileInputStream(getExcelPath().toFile());
+                XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
+
+            XSSFSheet sheet = getSheet(workbook, sheetName);
+
+            return getCellValue(sheet.getRow(rowIndex), columnIndex);
+        }
+    }
+
+    public static void setCellData(String value,
+            int rowNum,
+            int colNum,
+            String sheetName) throws IOException {
+
+        String filePath = getExcelPath().toString();
+
+        try (FileInputStream fis = new FileInputStream(filePath);
+                XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
+
+            XSSFSheet sheet = getSheet(workbook, sheetName);
+
+            XSSFRow row = sheet.getRow(rowNum);
+
+            if (row == null) {
+                row = sheet.createRow(rowNum);
+            }
+
+            XSSFCell cell = row.getCell(colNum);
+
+            if (cell == null) {
+                cell = row.createCell(colNum);
+            }
+
+            cell.setCellValue(value);
+
+            fis.close();
+
+            try (FileOutputStream fos = new FileOutputStream(filePath)) {
+                workbook.write(fos);
+            }
+        }
+    }
+
+    // ============================================================
+    // SESSION MODE METHODS
+    // ============================================================
+
+    public static Map<String, String> getDataFromOpenWorkbook(String dataKey,
+            String sheetName) {
+
+        XSSFWorkbook workbook = workbookHolder.get();
+
+        if (workbook == null) {
+            throw new IllegalStateException(
+                    "Workbook not open. Call openExcelFile() first.");
+        }
+
+        return getData(dataKey, sheetName, workbook);
+    }
+
+    public static String getValueFromOpenWorkbook(String dataKey,
+            String sheetName,
+            String columnName) {
+
+        return getDataFromOpenWorkbook(dataKey, sheetName)
+                .get(columnName);
+    }
+
+    public static String getValueFromOpenWorkbook(String dataKey,
+            String sheetName,
+            int columnIndex) {
+
+        XSSFWorkbook workbook = workbookHolder.get();
+
+        if (workbook == null) {
+            throw new IllegalStateException(
+                    "Workbook not open. Call openExcelFile() first.");
+        }
+
+        XSSFSheet sheet = getSheet(workbook, sheetName);
+
+        int dataRow = findDataRow(sheet, dataKey);
 
         if (dataRow == -1) {
-            throw new Exception("NO DATA FOUND for dataKey: " + dataKey);
+            throw new IllegalArgumentException(
+                    "No data found for key: " + dataKey);
         }
 
-        XSSFRow row = excelSheet.getRow(dataRow);
+        return getCellValue(sheet.getRow(dataRow), columnIndex);
+    }
+
+    public static String getValueFromOpenWorkbook(int rowIndex,
+            String sheetName,
+            int columnIndex) {
+
+        XSSFWorkbook workbook = workbookHolder.get();
+
+        if (workbook == null) {
+            throw new IllegalStateException(
+                    "Workbook not open. Call openExcelFile() first.");
+        }
+
+        XSSFSheet sheet = getSheet(workbook, sheetName);
+
+        return getCellValue(sheet.getRow(rowIndex), columnIndex);
+    }
+
+    public static int getRowsFromOpenWorkbook(String sheetName) {
+
+        XSSFWorkbook workbook = workbookHolder.get();
+
+        if (workbook == null) {
+            throw new IllegalStateException(
+                    "Workbook not open. Call openExcelFile() first.");
+        }
+
+        return getSheet(workbook, sheetName).getLastRowNum() + 1;
+    }
+
+    public static void setCellDataInOpenWorkbook(String value,
+            int rowNum,
+            int colNum,
+            String sheetName) throws IOException {
+
+        XSSFWorkbook workbook = workbookHolder.get();
+
+        if (workbook == null) {
+            throw new IllegalStateException(
+                    "Workbook not open. Call openExcelFile() first.");
+        }
+
+        XSSFSheet sheet = getSheet(workbook, sheetName);
+
+        XSSFRow row = sheet.getRow(rowNum);
+
         if (row == null) {
-            throw new Exception("Unable to read data row: " + dataRow);
+            row = sheet.createRow(rowNum);
         }
 
-        int columnCount = row.getLastCellNum();
-        XSSFRow headerRow = excelSheet.getRow(0);
-        if (headerRow == null) {
-            throw new Exception("Header row not found in sheet");
+        XSSFCell cell = row.getCell(colNum);
+
+        if (cell == null) {
+            cell = row.createCell(colNum);
         }
 
-        for (int i = 0; i < columnCount; i++) {
-            XSSFCell cell = row.getCell(i);
-            String cellData = null;
-            if (cell != null) {
-                if (cell.getCellType() == CellType.NUMERIC) {
-                    cell.setCellType(CellType.STRING);
-                }
-                cellData = cell.getStringCellValue();
-            }
+        cell.setCellValue(value);
 
-            XSSFCell headerCell = headerRow.getCell(i);
-            if (headerCell != null) {
-                String columnHeader = headerCell.getStringCellValue();
-                dataMap.put(columnHeader, cellData);
-            }
+        try (FileOutputStream fos = new FileOutputStream(getExcelPath().toFile())) {
+            workbook.write(fos);
         }
+    }
+
+    // ============================================================
+    // INTERNAL DATA EXTRACTION
+    // ============================================================
+
+    private static Map<String, String> getData(String dataKey,
+            String sheetName,
+            XSSFWorkbook workbook) {
+
+        Map<String, String> dataMap = new HashMap<>();
+
+        XSSFSheet sheet = getSheet(workbook, sheetName);
+
+        int dataRow = findDataRow(sheet, dataKey);
+
+        if (dataRow == -1) {
+            throw new IllegalArgumentException(
+                    "No data found for key: " + dataKey);
+        }
+
+        XSSFRow headerRow = sheet.getRow(0);
+        XSSFRow row = sheet.getRow(dataRow);
+
+        int columnCount = headerRow.getLastCellNum();
+
+        for (int col = 0; col < columnCount; col++) {
+
+            String header = getCellValue(headerRow, col);
+            String value = getCellValue(row, col);
+
+            dataMap.put(header, value);
+        }
+
         return dataMap;
     }
 }

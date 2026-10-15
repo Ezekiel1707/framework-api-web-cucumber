@@ -14,7 +14,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <maven-enforcer-plugin.version>3.11.0</maven-enforcer-plugin.version>
+    <maven-enforcer-plugin.version>3.15.0</maven-enforcer-plugin.version>
   </properties>
 
   <dependencies>
@@ -159,16 +159,19 @@
       <version>6.3.4</version>
       <scope>compile</scope>
     </dependency>
-    <!--   https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java   -->
+    <!-- Source: https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
-      <version>4.43.0</version>
+      <version>4.48.0</version>
+      <scope>compile</scope>
     </dependency>
+    <!-- Source: https://mvnrepository.com/artifact/com.github.cowwoc.requirements/guava -->
     <dependency>
       <groupId>com.github.cowwoc.requirements</groupId>
       <artifactId>guava</artifactId>
       <version>11.0</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugins</groupId>
@@ -192,6 +195,12 @@
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
       <version>3.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>technology.tabula</groupId>
+      <artifactId>tabula</artifactId>
+      <version>1.0.5</version>
+      <scope>compile</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
     <dependency>
